@@ -23,8 +23,8 @@ class login:
                 StdID = StringVar()
                 Firstname = StringVar()
                 Lastname = StringVar()
-                Dob = IntVar()
-                Owncar = StringVar()
+                # Dob = IntVar()
+                # Owncar = StringVar()
                 # =============================================================Functions===============================================================
                 def iExit():
                     iExit = tkinter.messagebox.askyesno("GEMS Dubai International School","Do you want to Exit the program?")
@@ -39,14 +39,14 @@ class login:
                     sd = studentlist.get(searchstd)
 
 
-                def cleardata():
-                    self.txtDob.delete(0, END)
+                # def cleardata():
+                #     self.txtDob.delete(0, END)
 
                 def addData():
                     if(len(StdID.get())!=0):
-                        projectbackend.addStdRec(StdID.get(), Firstname.get() , Lastname.get() , Dob.get() , Owncar.get() )
+                        projectbackend.addStdRec(StdID.get(), Firstname.get() , Lastname.get()  )
                         studentlist.delete(0,END)
-                        studentlist.insert(END,(StdID.get(), Firstname.get() , Lastname.get() , Dob.get() , Owncar.get()))
+                        studentlist.insert(END,(StdID.get(), Firstname.get() , Lastname.get()  ))
 
                 def DisplayData():
                     studentlist.delete(0, END)
@@ -56,25 +56,50 @@ class login:
                 def deleteData():
                     # if(len(StdID.get())!=0):
                         projectbackend.deletRec(sd[0])
-                        cleardata()
+                        # cleardata()
                         DisplayData()
 
                 def Searchdatabase():
                     studentlist.delete(0,END)
-                    for row in projectbackend.searchdata(StdID.get(), Firstname.get() , Lastname.get() , Dob.get(), Owncar.get()):
+                    for row in projectbackend.searchdata(StdID.get(), Firstname.get() , Lastname.get() ):
                         studentlist.insert(END, row, str(""))
                 def UpdateDatabase():
                     if(len(StdID.get())!=0):
                         projectbackend.deletRec(sd[0])
 
                     if (len(StdID.get()) != 0):
-                        projectbackend.addStdRec(StdID.get(), Firstname.get(), Lastname.get(), Dob.get(), Owncar.get())
+                        projectbackend.addStdRec(StdID.get(), Firstname.get(), Lastname.get())
                         studentlist.delete(0, END)
-                        studentlist.insert(END, (StdID.get(), Firstname.get(), Lastname.get(), Dob.get(), Owncar.get()))
+                        studentlist.insert(END, (StdID.get(), Firstname.get(), Lastname.get()))
+
+
+                options = [
+                "Front Gate",
+                "Back Gate",
+                ]
+                options2 = [
+                "6:40 - 7:00",
+                "7:00 - 7:20",
+                "7:20 - 7:40",
+                "Past 7:40"
+                ]
+                # options3 = [
+                # "yes",
+                # "no"
+                # ]
+
 
                 def FlowRate():
-                    Wt=Dob.get()
-                    con = sqlite3.connect("MYnewDatabase.db")
+                    print(Lastname.get())
+                    if(Lastname.get()==options2[0]):
+                        Wt = 20
+                    elif(Lastname.get()==options2[1]):
+                        Wt = 40
+                    elif(Lastname.get()==options2[2]):
+                        Wt = 60
+                    print(Wt)
+                    # Wt=Dob.get()
+                    con = sqlite3.connect("GemData.db")
                     cur = con.cursor()
                     currentDateTime = datetime.datetime.now()
                     print(currentDateTime.date())
@@ -83,9 +108,8 @@ class login:
                     print(leng[0])
                     con.close()
                     FR = leng[0]/(Wt/60)
-                    self.lblFna = Label(DataFrameBOTTOM, font=('arial', 20, 'bold'), text=FR, padx=2, pady=2, bg="aquamarine")
-                    self.lblFna.grid(row=1, column=0, sticky=W)
-
+                    self.lblFna = Label(DataFrameBOTTOM, font=('arial', 20, 'bold'), text=FR, padx=2, pady=2)
+                    self.lblFna.grid(row=1, column=0, sticky=W,padx=40)
 
 
                 #=============================================================FRAMES===================================================================
@@ -104,7 +128,7 @@ class login:
                 ButtonFrame.pack(side=BOTTOM)
 
                 DataFrame = Frame(MainFrame, bd=1, width=1300, height=400, padx=20, pady=18, bg="snow3", relief=RIDGE)
-                DataFrame.pack(side=BOTTOM)
+                DataFrame.pack(side=BOTTOM , padx=140)
 
                 DataFrameLEFT = LabelFrame(DataFrame, bd=1, width=500, height=500, padx=20, bg="aquamarine", relief=RIDGE,
                                            font=('arial',20,'bold'),text="Info\n")
@@ -122,23 +146,10 @@ class login:
                 DataFrameBOTTOM.pack(side=BOTTOM)
 
                 # ========================================================Labels and Entry Widget===================================================================
-                options = [
-                "Front Gate",
-                "Back Gate",
-                ]
-                options2 = [
-                "6:40 - 7:00",
-                "7:00 - 7:20",
-                "7:20 - 7:40",
-                "Past 7:40"
-                ]
-                options3 = [
-                "yes",
-                "no"
-                ]
+                
                 Firstname.set("Select")
                 Lastname.set("Select")
-                Owncar.set("Select")
+                # Owncar.set("Select")
 
 
                 self.lblFna = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Entry Gate: ", padx=2, pady=2, bg="aquamarine")
@@ -157,24 +168,24 @@ class login:
                 # self.txtLna = Entry(DataFrameLEFT, font=('arial', 20, 'bold'), textvariable=Lastname, width=19)
                 # self.txtLna.grid(row=3, column=1, padx=80, pady=30)
 
-                self.lbloc = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Do you drive your own car?  ", padx=2, pady=2,
-                                    bg="aquamarine")
-                self.lbloc.grid(row=4, column=0, sticky=W)
-                self.txtoc = OptionMenu( DataFrameLEFT, Owncar, *options3 )
-                self.txtoc.grid(row=4, column=1, padx=80, pady=30)
+                # self.lbloc = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Do you drive your own car?  ", padx=2, pady=2,
+                #                     bg="aquamarine")
+                # self.lbloc.grid(row=4, column=0, sticky=W)
+                # self.txtoc = OptionMenu( DataFrameLEFT, Owncar, *options3 )
+                # self.txtoc.grid(row=4, column=1, padx=80, pady=30)
 
 
-                self.lblDob = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Waiting Time: ", padx=2, pady=2,
-                                    bg="aquamarine")
-                self.lblDob.grid(row=5, column=0, sticky=W)
-                self.txtDob = Entry(DataFrameLEFT, font=('arial', 20, 'bold'), textvariable=Dob, width=19)
-                self.txtDob.grid(row=5, column=1, padx=80, pady=30)
+                # self.lblDob = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Waiting Time: ", padx=2, pady=2,
+                #                     bg="aquamarine")
+                # self.lblDob.grid(row=5, column=0, sticky=W)
+                # self.txtDob = Entry(DataFrameLEFT, font=('arial', 20, 'bold'), textvariable=Dob, width=19)
+                # self.txtDob.grid(row=5, column=1, padx=80, pady=30)
 
 
                 # self.lblStdID = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Mode Of Transport:", padx=1, pady=1, bg="aquamarine")
                 # self.lblStdID.grid( row = 6, column = 0, sticky = W)
-                Radiobutton(DataFrameLEFT, text = "Rental Vehicle", variable = StdID,value = "Rental Vehicle", indicator = 0,background = "white").grid(row=6, column=0, padx=0, pady=30)
-                Radiobutton(DataFrameLEFT, text = "Personal Vehicle", variable = StdID,value = "Personal Vehicle", indicator = 0,background = "white").grid(row=6, column=1, padx=0, pady=30)
+                Radiobutton(DataFrameLEFT, text = "Add Car", variable = StdID,value = "Car", indicator = 0,background = "white", command=addData).grid(row=6, column=0, padx=0, pady=30)
+                Radiobutton(DataFrameLEFT, text = "Add Bus", variable = StdID,value = "Bus", indicator = 0,background = "white", command=addData).grid(row=6, column=1, padx=0, pady=30)
                 # self.txtStdID = OptionMenu( DataFrameLEFT, StdID, *options )
                 # # self.txtStdID = Entry(DataFrameLEFT, font=('arial', 20, 'bold'), textvariable=StdID, width=39)
                 # self.txtStdID.grid(row=0, column=1, padx=0, pady=30)
@@ -191,14 +202,14 @@ class login:
                 scrollbar.config( command = studentlist.yview)
 
                 # ========================================================Button Widget===================================================================
-                self.btnAddData = Button(ButtonFrame, text="Add new", font= ('arial',12,'bold') , fg="white", bg="grey", width = 10 ,height = 1, bd=4, command = addData)
-                self.btnAddData.grid(row=0, column=0, padx=10, pady=10)
+                # self.btnAddData = Button(ButtonFrame, text="Add new", font= ('arial',12,'bold') , fg="white", bg="grey", width = 10 ,height = 1, bd=4, command = addData)
+                # self.btnAddData.grid(row=0, column=0, padx=10, pady=10)
 
                 self.btnDispay = Button(ButtonFrame, text="Display", font=('arial', 12, 'bold'), fg="white", bg="grey",width=10, height=1, bd=4, command = DisplayData)
                 self.btnDispay.grid(row=0, column=1, padx=10, pady=10)
 
-                self.btnClear = Button(ButtonFrame, text="Clear", font=('arial', 12, 'bold'),fg="white", bg="grey", width=10, height=1, bd=4, command=cleardata)
-                self.btnClear.grid(row=0, column=2, padx=10, pady=10)
+                # self.btnClear = Button(ButtonFrame, text="Clear", font=('arial', 12, 'bold'),fg="white", bg="grey", width=10, height=1, bd=4, command=cleardata)
+                # self.btnClear.grid(row=0, column=2, padx=10, pady=10)
 
                 self.btnDelete = Button(ButtonFrame, text="Delete", font=('arial', 12, 'bold'), fg="white", bg="grey",width=10, height=1, bd=4, command =deleteData)
                 self.btnDelete.grid(row=0, column=3, padx=10, pady=10)
@@ -225,7 +236,7 @@ class login:
         ButtonFrame.pack(side=BOTTOM)
 
         DataFrame = Frame(newMainFrame, bd=1, width=1300, height=400, padx=20, pady=18, bg="snow3", relief=RIDGE)
-        DataFrame.pack(side=BOTTOM)
+        DataFrame.pack(side=BOTTOM, padx=120)
 
         DataFrameLEFT = LabelFrame(DataFrame, bd=1, width=900, height=900, padx=350,pady=120,bg="aquamarine", relief=RIDGE,
                                            font=('arial',20,'bold'),text="Info\n")
